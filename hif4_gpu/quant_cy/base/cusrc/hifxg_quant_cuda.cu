@@ -2,6 +2,7 @@
 #include <torch/all.h>
 #include <torch/python.h>
 #include <ATen/cuda/Atomic.cuh>
+#include <ATen/cuda/CUDAContext.h>
 
 
 using bf16 = at::BFloat16;
@@ -309,16 +310,16 @@ void hifx_quant_cuda(torch::Tensor x, torch::Tensor result, int N){
     int blocks = (x.numel() + 4095) / 4096;
     
     if ((N==2)){
-        hifx_quant_cuda_kernel<2><<<blocks, threads>>>(x.data_ptr<float>(), result.data_ptr<float>(), x.numel());
+        hifx_quant_cuda_kernel<2><<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(x.data_ptr<float>(), result.data_ptr<float>(), x.numel());
     }
     if ((N==3)){
-        hifx_quant_cuda_kernel<3><<<blocks, threads>>>(x.data_ptr<float>(), result.data_ptr<float>(), x.numel());
+        hifx_quant_cuda_kernel<3><<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(x.data_ptr<float>(), result.data_ptr<float>(), x.numel());
     }
     if ((N==1)){
-        hifx_quant_cuda_kernel<1><<<blocks, threads>>>(x.data_ptr<float>(), result.data_ptr<float>(), x.numel());
+        hifx_quant_cuda_kernel<1><<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(x.data_ptr<float>(), result.data_ptr<float>(), x.numel());
     }
     if ((N==0)){
-        hifx_quant_cuda_kernel<0><<<blocks, threads>>>(x.data_ptr<float>(), result.data_ptr<float>(), x.numel());
+        hifx_quant_cuda_kernel<0><<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(x.data_ptr<float>(), result.data_ptr<float>(), x.numel());
     }
 
 }
@@ -356,16 +357,16 @@ void hifx_quant_cuda_bf16(torch::Tensor x, torch::Tensor result, int N){
     int blocks = (x.numel() + 4095) / 4096;
     
     if ((N==2)){
-        hifx_quant_cuda_bf16_kernel<2><<<blocks, threads>>>(x.data_ptr<bf16>(), result.data_ptr<bf16>(), x.numel());
+        hifx_quant_cuda_bf16_kernel<2><<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(x.data_ptr<bf16>(), result.data_ptr<bf16>(), x.numel());
     }
     if ((N==3)){
-        hifx_quant_cuda_bf16_kernel<3><<<blocks, threads>>>(x.data_ptr<bf16>(), result.data_ptr<bf16>(), x.numel());
+        hifx_quant_cuda_bf16_kernel<3><<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(x.data_ptr<bf16>(), result.data_ptr<bf16>(), x.numel());
     }
     if ((N==1)){
-        hifx_quant_cuda_bf16_kernel<1><<<blocks, threads>>>(x.data_ptr<bf16>(), result.data_ptr<bf16>(), x.numel());
+        hifx_quant_cuda_bf16_kernel<1><<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(x.data_ptr<bf16>(), result.data_ptr<bf16>(), x.numel());
     }
     if ((N==0)){
-        hifx_quant_cuda_bf16_kernel<0><<<blocks, threads>>>(x.data_ptr<bf16>(), result.data_ptr<bf16>(), x.numel());
+        hifx_quant_cuda_bf16_kernel<0><<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(x.data_ptr<bf16>(), result.data_ptr<bf16>(), x.numel());
     }
 
 }

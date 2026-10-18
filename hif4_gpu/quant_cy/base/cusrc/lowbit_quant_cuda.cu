@@ -1,6 +1,7 @@
 #include <torch/all.h>
 #include <torch/python.h>
 #include <ATen/cuda/Atomic.cuh>
+#include <ATen/cuda/CUDAContext.h>
 
 
 using bf16 = at::BFloat16;
@@ -168,7 +169,7 @@ void mxfp4_quant_cuda(const torch::Tensor x, torch::Tensor result){
     int threads = 128;
     int blocks = (x.numel() + threads*32 - 1) / (threads * 32);
 
-    mxfp4_quant_cuda_kernel<<<blocks, threads>>>(
+    mxfp4_quant_cuda_kernel<<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(
         x.data_ptr<float>(),
         result.data_ptr<float>(),
         x.numel()
@@ -180,7 +181,7 @@ void mxfp4_quant_cuda_bf16(const torch::Tensor x, torch::Tensor result){
     int threads = 128;
     int blocks = (x.numel() + threads*32 - 1) / (threads * 32);
 
-    mxfp4_quant_cuda_bf16_kernel<<<blocks, threads>>>(
+    mxfp4_quant_cuda_bf16_kernel<<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(
         x.data_ptr<bf16>(),
         result.data_ptr<bf16>(),
         x.numel()
@@ -301,7 +302,7 @@ void mxfp6_quant_cuda(const torch::Tensor x, torch::Tensor result){
     int threads = 128;
     int blocks = (x.numel() + 128*32 - 1) / (128 * 32);
     
-    mxfp6_quant_cuda_kernel<<<blocks, threads>>>(
+    mxfp6_quant_cuda_kernel<<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(
         x.data_ptr<float>(),
         result.data_ptr<float>(),
         x.numel()
@@ -313,7 +314,7 @@ void mxfp6_quant_cuda_bf16(const torch::Tensor x, torch::Tensor result){
     int threads = 128;
     int blocks = (x.numel() + 128*32 - 1) / (128 * 32);
     
-    mxfp6_quant_cuda_bf16_kernel<<<blocks, threads>>>(
+    mxfp6_quant_cuda_bf16_kernel<<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(
         x.data_ptr<bf16>(),
         result.data_ptr<bf16>(),
         x.numel()
@@ -435,7 +436,7 @@ void mxfp8e4m3_quant_cuda(const torch::Tensor x, torch::Tensor result){
     int threads = 128;
     int blocks = (x.numel() + 128*32 - 1) / (128 * 32);
     
-    mxfp8e4m3_quant_cuda_kernel<<<blocks, threads>>>(
+    mxfp8e4m3_quant_cuda_kernel<<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(
         x.data_ptr<float>(),
         result.data_ptr<float>(),
         x.numel()
@@ -447,7 +448,7 @@ void mxfp8e4m3_quant_cuda_bf16(const torch::Tensor x, torch::Tensor result){
     int threads = 128;
     int blocks = (x.numel() + 128*32 - 1) / (128 * 32);
     
-    mxfp8e4m3_quant_cuda_bf16_kernel<<<blocks, threads>>>(
+    mxfp8e4m3_quant_cuda_bf16_kernel<<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(
         x.data_ptr<bf16>(),
         result.data_ptr<bf16>(),
         x.numel()
@@ -579,7 +580,7 @@ void nvf4_quant_cuda(const torch::Tensor x, torch::Tensor result){
     int threads = 256;
     int blocks = (x.numel() + 256*16 - 1) / (256*16);
     
-    nvf4_quant_cuda_kernel<<<blocks, threads>>>(
+    nvf4_quant_cuda_kernel<<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(
         x.data_ptr<float>(),
         result.data_ptr<float>(),
         x.numel()
@@ -591,7 +592,7 @@ void nvf4_quant_cuda_bf16(const torch::Tensor x, torch::Tensor result){
     int threads = 256;
     int blocks = (x.numel() + 256*16 - 1) / (256*16);
     
-    nvf4_quant_cuda_bf16_kernel<<<blocks, threads>>>(
+    nvf4_quant_cuda_bf16_kernel<<<blocks, threads, 0, at::cuda::getCurrentCUDAStream()>>>(
         x.data_ptr<bf16>(),
         result.data_ptr<bf16>(),
         x.numel()
